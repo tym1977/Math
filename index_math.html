@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الرياضيات</title>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            text-align: center;
+            direction: rtl;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #fff;
+        }
+        .container {
+            margin-top: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .question {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .options button {
+            font-size: 20px;
+            margin: 10px;
+            padding: 12px 25px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            background: #ff6b81;
+            color: #fff;
+        }
+        .options button:hover {
+            background: #ff4757;
+        }
+        .correct {
+            background-color: #2ed573 !important;
+        }
+        .wrong {
+            background-color: #e74c3c !important;
+        }
+        #score {
+            font-size: 22px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>لعبة الرياضيات</h1>
+        <div class="question" id="question"></div>
+        <div class="options" id="options"></div>
+        <p id="score">النتيجة: 0</p>
+    </div>
+    <p class="footer">جميع الحقوق محفوظة © للأستاذة رانيا الربيعة</p>
+    <script>
+        let score = 0;
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const scoreElement = document.getElementById("score");
+        
+        const questions = [
+            { text: "كم حاصل جمع ٢ و ٣؟", answer: 5 },
+            { text: "إذا كان لديك ٤ تفاحات وأكلت ١، فكم تبقى لديك؟", answer: 3 },
+            { text: "في حديقة المدرسة، هناك ٥ أشجار برتقال و٣ أشجار تفاح. كم عدد الأشجار الإجمالي؟", answer: 8 },
+            { text: "لدى أحمد ٦ دفاتر، واشترى ٢ أخرى، كم لديه الآن؟", answer: 8 },
+            { text: "إذا كان لدى ليلى ٩ أقلام وأعطت صديقتها ٣، فكم بقي لديها؟", answer: 6 },
+            { text: "إذا اشترى خالد ٥ أكياس من الحلوى وكل كيس يحتوي على ٤ قطع، كم عدد الحلوى لديه؟", answer: 20 },
+            { text: "إذا كان هناك ١٠ طلاب في الفصل وانضم إليهم ٥ طلاب آخرين، فكم عدد الطلاب الآن؟", answer: 15 },
+            { text: "إذا كان لديك ١٢ كرة وفقدت ٤ منها، فكم بقي لديك؟", answer: 8 },
+            { text: "إذا قسمنا ١٦ قطعة شوكولاتة بين ٤ أطفال بالتساوي، كم يأخذ كل طفل؟", answer: 4 },
+            { text: "في مزرعة، هناك ٧ بقرات و٥ خراف. كم عدد الحيوانات الإجمالي؟", answer: 12 },
+            { text: "إذا كان هناك ٢٠ تفاحة في صندوق وتم بيع ٧ منها، فكم بقي؟", answer: 13 },
+            { text: "إذا كانت الحافلة تحتوي على ٣٠ مقعدًا وصعد ١٥ راكبًا، فكم عدد المقاعد الفارغة؟", answer: 15 },
+            { text: "وضعت الأم ٩ بيضات في الثلاجة وأخذت منها ٢، كم بقي؟", answer: 7 },
+            { text: "إذا كنت تملك ٨ دنانير وصرفت ٣ دنانير، كم بقي لديك؟", answer: 5 },
+            { text: "لدى محمد ١٢ كتابًا وأعطى صديقه ٤ منها، فكم بقي لديه؟", answer: 8 },
+            { text: "في متجر، هناك ١٥ صندوقًا من العصير وبيع منها ٦، كم بقي؟", answer: 9 },
+            { text: "إذا كان هناك ٦ طاولات وكل طاولة تحتوي على ٤ كراسي، فكم عدد الكراسي؟", answer: 24 },
+            { text: "إذا كان لديك ٢٥ كرة ووزعتها بالتساوي على ٥ أطفال، فكم يأخذ كل طفل؟", answer: 5 },
+            { text: "كم هو حاصل ضرب ٧ في ٣؟", answer: 21 }
+        ];
+        
+        function generateQuestion() {
+            if (questions.length === 0) {
+                questionElement.textContent = "انتهت الأسئلة!";
+                optionsElement.innerHTML = "";
+                return;
+            }
+            
+            let randomIndex = Math.floor(Math.random() * questions.length);
+            let selectedQuestion = questions[randomIndex];
+            questions.splice(randomIndex, 1);
+            
+            questionElement.textContent = selectedQuestion.text;
+            let correctAnswer = selectedQuestion.answer;
+            let answers = [correctAnswer, correctAnswer + 1, correctAnswer - 1];
+            answers.sort(() => Math.random() - 0.5);
+            
+            optionsElement.innerHTML = "";
+            answers.forEach(answer => {
+                let button = document.createElement("button");
+                button.textContent = answer;
+                button.onclick = () => checkAnswer(answer, correctAnswer, button);
+                optionsElement.appendChild(button);
+            });
+        }
+        
+        function checkAnswer(selected, correct, button) {
+            if (selected === correct) {
+                button.classList.add("correct");
+                score++;
+            } else {
+                button.classList.add("wrong");
+            }
+            scoreElement.textContent = `النتيجة: ${score}`;
+            setTimeout(generateQuestion, 1500);
+        }
+        
+        generateQuestion();
+    </script>
+</body>
+</html>
